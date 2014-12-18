@@ -2,6 +2,7 @@ package jiconv;
 
 import java.io.IOException;
 import java.io.ByteArrayOutputStream;
+import java.util.Arrays;
 
 public class Converter {
     private static void readStdin(ByteArrayOutputStream outputStream) throws IOException {
@@ -69,6 +70,10 @@ public class Converter {
         
         String inputString = new String(outputStream.toByteArray(), inputEncoding);
         byte[] output = inputString.getBytes(outputEncoding);
+
+        if (output[output.length - 1] == 0x15) {
+            output = Arrays.copyOf(output, output.length - 1);
+        }
 
         if (stripShifts) {
             for (int i = 0; i < output.length; i++) {
