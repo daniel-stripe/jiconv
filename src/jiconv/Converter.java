@@ -39,8 +39,8 @@ public class Converter {
             System.err.println("Options:");
             System.err.printf("    %-20s%s%s", "-f ENCODING", "Set input encoding", System.lineSeparator());
             System.err.printf("    %-20s%s%s", "-t ENCODING", "Set output encoding", System.lineSeparator());
-            System.err.printf("    %-20s%s%s", "-addshifts", "Surround input with shift bytes", System.lineSeparator());
-            System.err.printf("    %-20s%s%s", "-stripshifts", "Strip shift bytes from output", System.lineSeparator());
+            System.err.printf("    %-20s%s%s", "-addshifts", "Surround input with EBCDIC shift bytes", System.lineSeparator());
+            System.err.printf("    %-20s%s%s", "-stripshifts", "Strip EBCDIC shift bytes from output", System.lineSeparator());
         }
         System.exit(1);
     }
