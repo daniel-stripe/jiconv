@@ -5,6 +5,9 @@ import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 
 public class Converter {
+    static final byte EBCDICShiftIn = 0x0e;
+    static final byte EBCDICShiftOut = 0x0f;
+
     private static void readStdin(ByteArrayOutputStream outputStream) throws IOException {
         int bytesRead;
         while (true) {
@@ -46,11 +49,9 @@ public class Converter {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws IOException {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        readStdin(outputStream);
-
         String inputEncoding = null;
         String outputEncoding = null;
+        boolean addShifts = true;
         boolean stripShifts = false;
 
         for (int i = 0; i < args.length; i++) {
@@ -82,10 +83,25 @@ public class Converter {
                     }
                     outputEncoding = argValue;
                     break;
+                case "-addshifts":
+                    addShifts = true;
+                    break;
                 case "-stripshifts":
                     stripShifts = true;
                     break;
             }
+        }
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        if (addShifts) {
+            outputStream.write(EBCDICShiftIn);
+        }
+
+        readStdin(outputStream);
+
+        if (addShifts) {
+            outputStream.write(EBCDICShiftOut);
         }
 
         String inputString = new String(outputStream.toByteArray(), inputEncoding);
@@ -97,8 +113,7 @@ public class Converter {
 
         if (stripShifts) {
             for (int i = 0; i < output.length; i++) {
-                // 0x0e = SHIFT IN, 0x0f = SHIFT OUT
-                if (output[i] != 0x0e && output[i] != 0x0f) {
+                if (output[i] != EBCDICShiftIn && output[i] != EBCDICShiftOut) {
                     System.out.write(output[i]);
                 }
             }
