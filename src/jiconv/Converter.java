@@ -9,6 +9,10 @@ public class Converter {
         int bytesRead;
         while (true) {
             byte[] buffer = new byte[1024];
+            if (System.in.available() == 0) {
+                break;
+            }
+
             bytesRead = System.in.read(buffer);
             if (bytesRead < 0) {
                 break;
