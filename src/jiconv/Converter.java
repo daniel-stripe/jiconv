@@ -12,7 +12,7 @@ public class Converter {
             if (bytesRead < 0) {
                 break;
             } else {
-                outputStream.write(buffer);
+                outputStream.write(buffer, 0, bytesRead);
             }
         }
     }
