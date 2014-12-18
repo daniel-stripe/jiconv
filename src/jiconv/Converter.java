@@ -17,27 +17,27 @@ public class Converter {
             }
         }
     }
-    
+
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         readStdin(outputStream);
-        
+
         String inputEncoding = null;
         String outputEncoding = null;
         boolean stripShifts = false;
-        
+
         for (int i = 0; i < args.length; i++) {
             String argName = args[i];
             if (!argName.startsWith("-")) {
                 System.err.printf("%s is not a valid argument.\n", argName);
                 System.exit(1);
             }
-            
+
             String argValue = null;
-            
+
             if (argName.equals("-f") || argName.equals("-t")) {
                 if (args.length <= i + 1) {
                     System.err.printf("Argument %s is missing a value.\n", argName);
@@ -46,7 +46,7 @@ public class Converter {
 
                 argValue = args[++i];
             }
-            
+
             switch (argName) {
                 case "-f":
                     if (inputEncoding != null && !inputEncoding.equals(argValue)) {
@@ -67,7 +67,7 @@ public class Converter {
                     break;
             }
         }
-        
+
         String inputString = new String(outputStream.toByteArray(), inputEncoding);
         byte[] output = inputString.getBytes(outputEncoding);
 
