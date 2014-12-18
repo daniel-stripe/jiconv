@@ -26,6 +26,7 @@ public class Converter {
         
         String inputEncoding = null;
         String outputEncoding = null;
+        boolean stripShifts = false;
         
         for (int i = 0; i < args.length; i++) {
             String argName = args[i];
@@ -34,12 +35,17 @@ public class Converter {
                 System.exit(1);
             }
             
-            if (args.length <= i + 1) {
-                System.err.printf("Argument %s is missing a value.\n", argName);
-                System.exit(1);
+            String argValue = null;
+            
+            if (argName.equals("-f") || argName.equals("-t")) {
+                if (args.length <= i + 1) {
+                    System.err.printf("Argument %s is missing a value.\n", argName);
+                    System.exit(1);
+                }
+
+                argValue = args[++i];
             }
             
-            String argValue = args[++i];
             switch (argName) {
                 case "-f":
                     if (inputEncoding != null && !inputEncoding.equals(argValue)) {
@@ -55,11 +61,25 @@ public class Converter {
                     }
                     outputEncoding = argValue;
                     break;
+                case "-stripshifts":
+                    stripShifts = true;
+                    break;
             }
         }
         
         String inputString = new String(outputStream.toByteArray(), inputEncoding);
         byte[] output = inputString.getBytes(outputEncoding);
-        System.out.write(output);
+
+        if (stripShifts) {
+            for (int i = 0; i < output.length; i++) {
+                // 0x0e = SHIFT IN, 0x0f = SHIFT OUT
+                if (output[i] != 0x0e && output[i] != 0x0f) {
+                    System.out.write(output[i]);
+                }
+            }
+        } else {
+            System.out.write(output, 0, output.length);
+        }
+        System.out.flush();
     }
 }
