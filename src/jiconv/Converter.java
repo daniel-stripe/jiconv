@@ -22,6 +22,26 @@ public class Converter {
         }
     }
 
+    private static void error(String reason) {
+        error(reason, false);
+    }
+
+    private static void error(String reason, boolean showUsage) {
+        System.err.println("Error: " + reason);
+        if (showUsage) {
+            System.err.println("Usage: java jiconv/Converter [options]");
+            System.err.println();
+            System.err.println("A Java iconv.");
+            System.err.println();
+            System.err.println("Options:");
+            System.err.printf("    %-20s%s%s", "-f ENCODING", "Set input encoding", System.lineSeparator());
+            System.err.printf("    %-20s%s%s", "-t ENCODING", "Set output encoding", System.lineSeparator());
+            System.err.printf("    %-20s%s%s", "-addshifts", "Surround input with shift bytes", System.lineSeparator());
+            System.err.printf("    %-20s%s%s", "-stripshifts", "Strip shift bytes from output", System.lineSeparator());
+        }
+        System.exit(1);
+    }
+
     /**
      * @param args the command line arguments
      */
@@ -36,16 +56,14 @@ public class Converter {
         for (int i = 0; i < args.length; i++) {
             String argName = args[i];
             if (!argName.startsWith("-")) {
-                System.err.printf("%s is not a valid argument.\n", argName);
-                System.exit(1);
+                error(String.format("%s is not a valid argument.\n", argName), true);
             }
 
             String argValue = null;
 
             if (argName.equals("-f") || argName.equals("-t")) {
                 if (args.length <= i + 1) {
-                    System.err.printf("Argument %s is missing a value.\n", argName);
-                    System.exit(1);
+                    error(String.format("Argument %s is missing a value.\n", argName), true);
                 }
 
                 argValue = args[++i];
@@ -54,15 +72,13 @@ public class Converter {
             switch (argName) {
                 case "-f":
                     if (inputEncoding != null && !inputEncoding.equals(argValue)) {
-                        System.err.printf("Found multiple values for %s.\n", argName);
-                        System.exit(1);
+                        error(String.format("Found multiple values for %s.\n", argName), true);
                     }
                     inputEncoding = argValue;
                     break;
                 case "-t":
                     if (outputEncoding != null && !outputEncoding.equals(argValue)) {
-                        System.err.printf("Found multiple values for %s.\n", argName);
-                        System.exit(1);
+                        error(String.format("Found multiple values for %s.\n", argName), true);
                     }
                     outputEncoding = argValue;
                     break;
